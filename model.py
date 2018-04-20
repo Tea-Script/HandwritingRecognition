@@ -1,6 +1,4 @@
 
-from datagenerator1 import *
-from datagenerator2 import *
 from datsets import *
 from common_functions import *
 
@@ -129,6 +127,7 @@ optimizer_ft = optim.SGD(model_ft.fc.parameters(), lr=0.001, momentum=0.9)
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
                        num_epochs=2)
+torch.save(model_ft, "./weights1")
 
 def visualize_model(model, num_images=9):
     was_training = model.training

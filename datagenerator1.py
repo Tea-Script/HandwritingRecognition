@@ -12,7 +12,6 @@ def preprocess(generate = False):
     else:
         train_samples = [imread(os.path.join("./train", x)) for x in os.listdir("./train/") if x[-4:] == ".jpg"]
         test_samples = [imread(os.path.join("./test", x)) for x in os.listdir("./test/") if x[-4:] == ".jpg"]
-        
     #preprocessing
     for i in range(train_size):
         dir = './train/{}'.format(i)
@@ -20,10 +19,9 @@ def preprocess(generate = False):
             os.system("rm -r " + dir)
             os.system("mkdir  {}".format(dir))
         except Exception as e: print(e)
-        
-        img = train_samples[i]    
+        img = train_samples[i]
         boxes = get_bounding_boxes(train_samples[i])
-        subdir = dir + '/{}'.format(len(boxes)) 
+        subdir = dir + '/{}'.format(len(boxes))
         j = 0
         for box in boxes:
             mini,maxi,minj,maxj = box
@@ -35,14 +33,14 @@ def preprocess(generate = False):
             j += 1
 
     for i in range(test_size):
-        dir = './test/{}'.format(i)    
+        dir = './test/{}'.format(i)
         try:
             os.system("rm -r" + dir)
             os.system("mkdir  {}".format(dir))
         except Exception as e: print(e)
         img = test_samples[i]
         boxes = get_bounding_boxes(test_samples[i])
-        subdir = dir + '/{}'.format(len(boxes)) 
+        subdir = dir + '/{}'.format(len(boxes))
         j = 0
         for box in boxes:
             mini,maxi,minj,maxj = box
