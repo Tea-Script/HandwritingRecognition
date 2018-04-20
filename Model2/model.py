@@ -78,7 +78,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=15):
     return model
 
 
-model_ft = models.resnet18(pretrained=True)
+#model_ft = models.resnet18(pretrained=True)
+model_ft = models.densenet161(pretrained=True)
 for param in model_ft.parameters():
     param.requires_grad = False
 
