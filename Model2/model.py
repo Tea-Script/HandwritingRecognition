@@ -28,7 +28,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=15):
             for data in dataloaders[phase]:
                 # get the inputs
                 inputs, labels = data
-                
+                #print(inputs, labels)
                 # wrap them in Variable
                 if use_gpu:
                     inputs = Variable(inputs.cuda())
@@ -83,7 +83,6 @@ for param in model_ft.parameters():
     param.requires_grad = False
 
 num_ftrs = model_ft.fc.in_features
-
 model_ft.fc = nn.Linear(num_ftrs, len(class_names))
 
 if use_gpu:
