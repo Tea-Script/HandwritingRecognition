@@ -43,7 +43,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=15):
                 
                 outputs = model(inputs)
                 _, preds = torch.max(outputs.data, 1) 
-                
+                #preds = preds.float()
                 loss = criterion(outputs, labels)
 
                 # backward + optimize only if in training phase
@@ -109,7 +109,7 @@ def visualize_model(model, num_images=9):
 
     for i, data in enumerate(dataloaders['test']):
         inputs, labels = data
-        inputs = inputs.float()
+        
         if use_gpu:
             inputs, labels = Variable(inputs.cuda()), Variable(labels.cuda())
         else:
