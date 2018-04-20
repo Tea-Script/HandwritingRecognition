@@ -1,5 +1,5 @@
 
-from datsets import *
+from datasets import *
 from common_functions import *
 
 class LevenshteinDist(nn.Module):
@@ -126,7 +126,7 @@ optimizer_ft = optim.SGD(model_ft.fc.parameters(), lr=0.001, momentum=0.9)
 # Decay LR by a factor of 0.1 every 7 epochs
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
-                       num_epochs=2)
+                       num_epochs=3)
 torch.save(model_ft, "./weights1")
 
 def visualize_model(model, num_images=9):

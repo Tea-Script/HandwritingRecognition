@@ -236,7 +236,7 @@ class SymbDataset(Dataset):
         
         for file in sorted(os.listdir(imgdir)):
             file = os.path.join(imgdir, file)
-            #print(file)
+            print(file)
             if(l == 0):
                 img = sci.imread(file, mode="RGB")
                 if(img is None):
