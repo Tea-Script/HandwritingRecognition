@@ -40,8 +40,7 @@ image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'test']}
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], 
-batch_size=100,
-                                             shuffle=True, num_workers=16)
+batch_size=100,shuffle=True, num_workers=16)
               for x in ['train', 'test']}
 
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'test']}
@@ -56,6 +55,7 @@ def imshow(inp, title=None):
     #inp = std * inp + mean
     #inp = np.clip(inp, 0, 1)
     plt.imshow(inp)
+    plt.imsave("saved", inp)
     if title is not None:
         plt.title(title)
     plt.pause(0.001)  # pause a bit so that plots are updated
