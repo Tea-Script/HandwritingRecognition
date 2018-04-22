@@ -21,7 +21,7 @@ SIZES = [TRAINING_SIZE, TEST_SIZE]
 
 
 def make_img(symbol, phase, n, plot = False):
-    '''Creates a 56x56 image of a symbol'''
+    '''Creates an image of a symbol'''
     sym = symbol.replace("\\", "")
     sym = sym.replace("'", "squote")
     sym = sym.replace('"', "dquote")
@@ -84,7 +84,7 @@ def make_img(symbol, phase, n, plot = False):
     #now we need to read the images in as arrays and segment them into 56x56px arrays consisting of all the black squares.
     #dependency: Scipy
     image = io.imread(imgloc, mode="L")/255
-    #for each array in arrays, to center a 56px image of a digit, we should identify the width and height of the digit
+    #for each array in arrays, to center an image of a digit, we should identify the width and height of the digit
     
     cond = image < .2 #threshold for dark enough
     indices = np.argwhere(cond)
@@ -94,11 +94,11 @@ def make_img(symbol, phase, n, plot = False):
         
     hw = maxarr - minarr + 1 #height, width
         
-    if(np.any(hw > (56,56))): raise Exception("Image too large, digit requires compression") #this will never happen with our set
-    #we need to center the digit in the 28x28 space
-    remainder_height = (56 - hw[0]) // 2 
-    remainder_width = (56 - hw[1]) // 2
-    arr = np.ones((56,56))
+    #if(np.any(hw > (32,32))): raise Exception("Image too large, digit requires compression") #this will never happen with our set
+    #we need to center the digit in the 32x32 space
+    remainder_height = (32 - hw[0]) // 2 
+    remainder_width = (32 - hw[1]) // 2
+    arr = np.ones((32,32))
     #tmp = image[minarr[0] : minarr, startcol : fincol]
     arr[remainder_height : hw[0] + remainder_height , remainder_width : hw[1] + remainder_width] = tmp  
     if(plot):
@@ -106,7 +106,7 @@ def make_img(symbol, phase, n, plot = False):
         plt.show()
     os.system("rm " + imgloc)
     for i in range(n):
-        plt.imsave(imgloc[:-4] +str(i)+".png" , arr, format="png", cmap=plt.get_cmap('Greys_r'))
+        plt.imsave(imgloc[:-4] +str(i)+".png" , tmp, format="png", cmap=plt.get_cmap('Greys_r'))
     return arr
 
 
