@@ -19,13 +19,13 @@ plt.ion()
 
 data_transforms = {
     'train': transforms.Compose([
-        transforms.RandomRotation(130),# translate=(15,15)),
+        transforms.RandomRotation(75),# translate=(15,15)),
         transforms.Resize(256),
         transforms.RandomCrop(224),
         transforms.ToTensor()
     ]),
     'test': transforms.Compose([
-        transforms.RandomRotation(130),
+        transforms.RandomRotation(75),
         #transforms.RandomAffine(130, translate=(15,15)),
         transforms.Resize(256),
         transforms.RandomCrop(224),
@@ -56,7 +56,6 @@ def imshow(inp, title=None):
     #inp = std * inp + mean
     #inp = np.clip(inp, 0, 1)
     plt.imshow(inp)
-    plt.imsave("saved", inp)
     if title is not None:
         plt.title(title)
     plt.pause(0.001)  # pause a bit so that plots are updated
