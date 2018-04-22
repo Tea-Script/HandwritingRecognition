@@ -1,7 +1,46 @@
 
 from datasets import *
+from confusionmeter import *
 
+def run_model(model):
+    model.train = False
+    best_corrects = 0
+    top3_best_corrects = 0
+    individual_accuracy = [0]*len(class_names)
+    confusion_matrix = ConfusionMeter(len(class_names))
+    for data in dataloaders["test"]:
+        inputs, labels = data
+        if use_gpu:
+            inputs = Variable(inputs.cuda())
+            labels = Variable(labels.cuda())
+        else:
+            inputs = Variable(inputs)
+            labels = Variable(labels)
+        outputs = model(inputs)
+        #print(outputs)
+        _, preds = torch.max(outputs.data, 1) 
+        _, allpreds = torch.sort(outputs.data, descending=True, dim=1)
+        #print(allpreds.numpy())
+        top3preds = allpreds[:3]
+        best_corrects += torch.sum(preds == labels.data)
+        #top3_best_corrects += torch.sum(labels.data in top3preds) 
+        confusion_matrix.add(preds, labels.data)
 
+    confusion_matrix = confusion_matrix.value()
+    TP = np.diag(confusion_matrix)
+    FP = np.sum(np.sum(confusion_matrix, axis=0) - TP)
+    FN = np.sum(np.sum(confusion_matrix, axis=1) - TP)
+    TP = np.sum(TP)
+    precision = TP / (TP + FP)
+    recall = TP / (TP + FN)
+    best_accuracy = best_corrects / dataset_sizes["test"]
+    #top3_accuracy = top3_best_corrects / dataset_Sizes["test"]
+    
+    print("num correct", best_corrects, "num true postives",TP,"num false positives", FP,"num false negatives", FN)
+    print("precision", precision)
+    print("recall", recall)
+    print("accuracy", best_accuracy)
+    #print(top3_accuracy)
 
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=15):
@@ -79,6 +118,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=15):
 
 
 #model_ft = models.resnet50(pretrained=True)
+<<<<<<< HEAD
 model_ft = models.densenet161(pretrained="imagenet")
 for param in model_ft.parameters():
     param.requires_grad = False
@@ -96,13 +136,17 @@ criterion = nn.CrossEntropyLoss()
 
 # Observe that all parameters are being optimized
 #optimizer_ft = optim.SGD(model_ft.fc.parameters(), lr=0.001, momentum=0.9)
-optimizer_ft = optim.SGD(model_ft.classifier.parameters(), lr=.2, momentum=.8)
+optimizer_ft = optim.SGD(model_ft.classifier.parameters(), lr=0.2, momentum=0.9)
+
 # Decay LR by a factor of 0.1 every 7 epochs
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=5, gamma=0.5)
-model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
-                       num_epochs=25)
+#model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
+#                       num_epochs=8)
 
 #torch.save(model_ft, "./weights2")
+model = torch.load("weights2")
+run_model(model)
+
 
 def visualize_model(model, num_images=9):
     was_training = model.training
@@ -128,7 +172,9 @@ def visualize_model(model, num_images=9):
             #print(preds,j)
             ax.set_title('predicted: {}'.format(class_names[int(preds.data[j])]))
             imshow(inputs.cpu().data[j])
-
+            inp = inputs.cpu().data[j]
+            inp = inp.numpy().transpose((1, 2, 0))
+            plt.imsave("saved" + str(j), inp)
             if images_so_far == num_images:
                 model.train(mode=was_training)
                 return

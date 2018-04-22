@@ -55,7 +55,6 @@ def imshow(inp, title=None):
     #inp = std * inp + mean
     #inp = np.clip(inp, 0, 1)
     plt.imshow(inp)
-    plt.imsave("saved", inp)
     if title is not None:
         plt.title(title)
     plt.pause(0.001)  # pause a bit so that plots are updated
