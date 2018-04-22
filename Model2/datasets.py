@@ -19,13 +19,13 @@ plt.ion()
 
 data_transforms = {
     'train': transforms.Compose([
-        transforms.RandomRotation(130),# translate=(15,15)),
+        transforms.RandomRotation(75),# translate=(15,15)),
         transforms.Resize(256),
         transforms.RandomCrop(224),
         transforms.ToTensor()
     ]),
     'test': transforms.Compose([
-        transforms.RandomRotation(130),
+        transforms.RandomRotation(75),
         #transforms.RandomAffine(130, translate=(15,15)),
         transforms.Resize(256),
         transforms.RandomCrop(224),
@@ -41,7 +41,7 @@ image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                   for x in ['train', 'test']}
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], 
 batch_size=100,
-                                             shuffle=True, num_workers=0)
+                                             shuffle=True, num_workers=16)
               for x in ['train', 'test']}
 
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'test']}
