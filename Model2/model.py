@@ -78,13 +78,16 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=15):
     return model
 
 
-model_ft = models.resnet50(pretrained=True)
-#model_ft = models.densenet161(pretrained=True)
+#model_ft = models.resnet50(pretrained=True)
+model_ft = models.densenet161(pretrained="imagenet")
 for param in model_ft.parameters():
     param.requires_grad = False
 
-num_ftrs = model_ft.fc.in_features
-model_ft.fc = nn.Linear(num_ftrs, len(class_names))
+#num_ftrs = model_ft.fc.in_features
+#model_ft.fc = nn.Linear(num_ftrs, len(class_names))
+num_ftrs = model_ft.classifier.in_features
+model_ft.classifier = nn.Linear(num_ftrs, len(class_names))
+
 
 if use_gpu:
     model_ft = model_ft.cuda()
@@ -92,14 +95,14 @@ if use_gpu:
 criterion = nn.CrossEntropyLoss()
 
 # Observe that all parameters are being optimized
-optimizer_ft = optim.SGD(model_ft.fc.parameters(), lr=0.001, momentum=0.9)
-
+#optimizer_ft = optim.SGD(model_ft.fc.parameters(), lr=0.001, momentum=0.9)
+optimizer_ft = optim.SGD(model_ft.classifier.parameters(), lr=.2, momentum=.8)
 # Decay LR by a factor of 0.1 every 7 epochs
-exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
+exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=5, gamma=0.5)
 model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
                        num_epochs=25)
 
-torch.save(model_ft, "./weights2")
+#torch.save(model_ft, "./weights2")
 
 def visualize_model(model, num_images=9):
     was_training = model.training
