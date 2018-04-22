@@ -118,7 +118,6 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=15):
 
 
 #model_ft = models.resnet50(pretrained=True)
-<<<<<<< HEAD
 model_ft = models.densenet161(pretrained="imagenet")
 for param in model_ft.parameters():
     param.requires_grad = False
