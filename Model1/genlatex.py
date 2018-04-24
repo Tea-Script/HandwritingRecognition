@@ -104,9 +104,9 @@ def gen_random_latex(hand=False, name="rand0", folder="./"):
             charlast = False
             bracketcontent = False
         else: #choose random ASCII on standard keyboard 50% of time
-            r = list(range(33, 123)) #keyboard values of ascii table
             blacklist = [91,92,93,94,95,35,36,37,38, 39]
-            r = [x for x in r if x not in blacklist] #remove special characters and escape characters
+            r = [33, 43,45 ] + list(range(48,57)) + [60, 61, 62] + list(range(65,91)) + list(range(97,123))
+            r = [chr(x) for x in r if x not in blacklist] #remove special characters and escape characters
             n = random.choice(r)
             c = chr(n)
             body += supportchar + c #add a space before c if previous char is escaped
