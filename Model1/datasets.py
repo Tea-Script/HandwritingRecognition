@@ -78,7 +78,7 @@ class lev:
         else:
             a = observed
             b = expected
-        self.M = np.array([[-1]*(len(b))]*(len(a)))
+        self.M = np.array([[-1]*(len(b) + 1)]*(len(a) + 1))
         return self.levenhelper(a, b, len(a), len(b) )
 
     def levenhelper(self, a, b, i, j):
