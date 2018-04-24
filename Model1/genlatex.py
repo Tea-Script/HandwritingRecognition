@@ -23,7 +23,7 @@ import cv2
 warnings.filterwarnings("ignore", category=DeprecationWarning) #ignore imread deprecation warning
 
 
-random.seed(1111)
+random.seed(2222)
 
 with open('latexsymbols.txt', 'r') as f:
     supported_characters = f.read().split('\n')
@@ -42,6 +42,7 @@ def gen_random_latex(hand=False, name="rand0", folder="./"):
         \\pagenumbering{gobble}
         \\usepackage{amsmath}
         \\usepackage{amssymb}
+        \\usepackage{euler}
         \\addtolength{\\topmargin}{-1.5in}
         \\begin{document}\n
         \\begin{minipage}[t][0pt]{\\linewidth}\n
@@ -72,8 +73,9 @@ def gen_random_latex(hand=False, name="rand0", folder="./"):
             c = "'"
             charlast = False
             bracketcontent = False
-        if(x < .09 and charlast and not space): #choose a ^ or _ or frac or space 5% of the time
+        if(x < .09 and charlast and not space and list(body)[-1] != "}"): #choose a ^ or _ or frac or space 5% of the time
             c = random.choice(modify_level)
+            
             num_open += 1
             body += c + "{"
             if(c == "\\frac"):
@@ -102,10 +104,11 @@ def gen_random_latex(hand=False, name="rand0", folder="./"):
             charlast = False
             bracketcontent = False
         else: #choose random ASCII on standard keyboard 50% of time
+            r = list(range(33, 123)) #keyboard values of ascii table
             blacklist = [91,92,93,94,95,35,36,37,38, 39]
-            r = [33, 43,45 ] + list(range(48,57)) + [60, 61, 62] + list(range(65,91)) + list(range(97,123))
-            r = [chr(x) for x in r if x not in blacklist] #remove special characters and escape characters
-            c = random.choice(r)
+            r = [x for x in r if x not in blacklist] #remove special characters and escape characters
+            n = random.choice(r)
+            c = chr(n)
             body += supportchar + c #add a space before c if previous char is escaped
             linecontent = True
             space = False
@@ -188,7 +191,8 @@ def get_bounding_boxes(file_name, out_dir):
         cropped = img_final[y :y +  h , x : x + w]
         images.append(cropped)
         s = os.path.join(out_dir, str(index)+ '.jpg')  
-        cv2.imwrite(s , cropped)
+        if(w > 5 and h > 5 and index):
+        	cv2.imwrite(s , cropped)
         index += 1
 
     # write original image with added contours to disk
