@@ -27,7 +27,7 @@ def get_symbol(image, model):
     #print(pred)
     pred = int(pred[0]) 
     symbol = class_names2[pred]
-    print(symbol)
+    #print(symbol)
     symbol = unescape[symbol]
     return symbol    
 
