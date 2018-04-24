@@ -16,7 +16,7 @@ for param in model_ft.parameters():
     param.requires_grad = False
 model_ft.classifier = nn.Linear(num_ftrs, len(class_names1))
 
-#model_ft = torch.load("weights2")
+model_ft = torch.load("weights2")
 
 def get_symbol(image, model):
     
@@ -24,6 +24,7 @@ def get_symbol(image, model):
     inputs = Variable(img.unsqueeze(0)) 
     outputs = model(inputs)
     _, pred = torch.max(outputs.data, 1)
+    #print(pred)
     pred = int(pred[0]) 
     symbol = class_names2[pred]
     symbol = unescape[symbol]
