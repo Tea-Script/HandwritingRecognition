@@ -80,24 +80,27 @@ class lev:
         else:
             a = observed
             b = expected
-        self.M = np.array([[-1]*(len(b) + 1)]*(len(a) + 1))
-        return self.levenhelper(a, b, len(a), len(b) )
+        if(len(a) > len(b)):
+            self.M = np.ones((len(a), len(b)))* -1
+            return self.levenhelper(a, b, len(a), len(b) )
+        else:
+            self.M = np.ones((len(b), len(a)))* -1
+            return self.levenhelper(b, a, len(b), len(a) )
 
     def levenhelper(self, a, b, i, j):
         '''for recursive levenshtein distance dynamic programming
         ***Gives the distance between the first i characters of a and the first j characters of b.
         '''
-        if(i == 0 or j == 0 or j > len(b) or i > len(a)):
-                return max(i,j)
-        elif(self.M[i,j] != -1):
-            return self.M[i,j]
+        if(min(i,j) == 0 or i > len(a) or j > len(b) ):
+            return max(i,j)
+        elif(self.M[i - 1, j - 1] != -1):
+            return self.M[i - 1, j - 1]
         else:
-            self.M[i,j] = min([
-                self.levenhelper(a, b, i - 1, j) + 1,
-                self.levenhelper(a, b, i, j + 1) + 1,
-                self.levenhelper(a, b, i-1, j-1) + (a[i - 1] != b[j - 1])
-            ])
-            return self.M[i,j]
+            l1 = self.levenhelper(a, b, i - 1, j) + 1 
+            l2 = self.levenhelper(a, b, i, j + 1) + 1
+            l3 = self.levenhelper(a, b, i-1, j-1) + (a[i - 1] != b[j - 1])
+            self.M[i - 1, j - 1] = min([l1,l2,l3])
+            return self.M[i - 1, j - 1]
 
 def replace(symbol):
     '''Removes characters not allowable by linux directory names and replaces them with usable names'''
@@ -135,4 +138,7 @@ if(__name__ == "__main__"):
     print(1,LEV.Levenshtein(["111"],["112"]))
     print(0, LEV.Levenshtein(["111"],["111"]))
     print(2, LEV.Levenshtein(["111"],["123","122"])) 
+    print(1, LEV.Levenshtein(["131","111","121"],["131","151", "111","121"]))
+    print(3, LEV.Levenshtein(["131", "121"],["131","144", "111", "121","141"]))
+    
 
