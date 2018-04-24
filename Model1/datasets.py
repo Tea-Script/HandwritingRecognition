@@ -22,7 +22,7 @@ with open('latexsymbols.txt', 'r') as f:
 
 data_transforms = transforms.Compose([
         transforms.ToPILImage(),
-        transforms.RandomRotation(75),
+        #transforms.RandomRotation(75),
         #transforms.RandomAffine(130, translate=(15,15)),
         transforms.Resize(256),
         transforms.RandomCrop(224),
@@ -36,34 +36,36 @@ data_dir = "./"
 def simplify(path, verbose=0):
     '''Returns a list containing each character in a LaTex document string in order of appearance'''
     with open(path, "r+") as f:
-    	latex = f.read() 
-    start = latex.find("\\begin{document}") + len("\begin{document}")
-    end = latex.find("\\end{document}")
+    	latex = f.read().replace('\n',"") 
+    start = latex.find("\\begin{minipage}[t][0pt]{\\linewidth}") + len("\\begin{minipage}[t][0pt]{\\linewidth}")
+    end = latex.find("\\end{minipage}")
     latex = latex[start: end] #document body
     latex = latex.replace("\\[","") #removing noncharacter command for equations
     latex = latex.replace("\\]","") #removing noncharacter command for equations
-    latex = latex.replace("\n", "")
     #latex = latex.replace("$", "") #removing noncharacter command for equations
     #latex = latex.replace("\text{") should make a function for this if necessary later on
     #find all supported LaTeX commands
     escaped_chars = [re.escape(x) for x in supported_characters]
     found_symbols = re.findall(r"(?=("+'|'.join(escaped_chars)+r"))", latex)
-    found_symbols = list(filter(None, found_symbols)) #remove empty strings    
+    found_symbols = list(filter(None, found_symbols)) #remove empty strings 
     #search latex file. For every "\" add the next found supported word to a list, then remove its first occurence from the string and list
     arr = []
     if(verbose): print(found_symbols)
-    for c in latex:
+    for i in range(len(latex)):
         try:
+            c = latex[i]
             if(c == "\\"): #found a "\" command
                 sym = found_symbols.pop(0)
                 arr.append(sym)
                 latex = latex.replace(sym, "", 1)
-            elif(c in "{}^_" ): #found a position delimeter or container that doesn't belong to a command
+
+            elif(c in "{}^_ " ): #found a position delimeter or container that doesn't belong to a command
                 pass
             else: #found a normal character
                 arr.append(c)
         except IndexError:
             if(verbose): print("Warning no symbols remaining")
+            break
     return arr
 class lev:
     def __init__(self):
@@ -76,7 +78,7 @@ class lev:
         else:
             a = observed
             b = expected
-        self.M = np.array([[-1]*(len(b)+1)]*(len(a)+1))
+        self.M = np.array([[-1]*(len(b))]*(len(a)))
         return self.levenhelper(a, b, len(a), len(b) )
 
     def levenhelper(self, a, b, i, j):
@@ -125,5 +127,6 @@ def replace(symbol):
 LEV = lev()
 
 
-
+if(__name__ == "__main__"):
+    print(simplify("test/0.tex", verbose=1))
 
