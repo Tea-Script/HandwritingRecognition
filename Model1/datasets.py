@@ -22,7 +22,7 @@ with open('latexsymbols.txt', 'r') as f:
 
 data_transforms = transforms.Compose([
         transforms.ToPILImage(),
-        #transforms.RandomRotation(75),
+        transforms.RandomRotation(75),
         #transforms.RandomAffine(130, translate=(15,15)),
         transforms.Resize(256),
         transforms.RandomCrop(224),
