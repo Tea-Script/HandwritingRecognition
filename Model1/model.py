@@ -46,9 +46,11 @@ def run_model(model):
                 symbol = get_symbol(img, model)
                 latex.append(symbol)
             avg_lev += LEV.Levenshtein(latex, label)
+
             latex = latex[:len(label)]
             label = label[:len(latex)]
             print(len(latex),len(label))
+
             acc += np.sum(np.array(latex) == np.array(label))/ len(label)
             n += 1
             print("Accuracy by sample {0} is {1}".format(n, acc/n))
