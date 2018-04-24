@@ -1,3 +1,6 @@
 \sum
 \int
 \prod
+\bigcup
+\bigcap
+
