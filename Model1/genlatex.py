@@ -125,6 +125,15 @@ def gen_random_latex(hand=False, name="rand0", folder="./"):
     f.close()
     return latex_doc
 
+def clear_dir(dir = "./"):
+    '''Removes jpg, log, aux, and tex files from directory'''
+    try:
+        os.system("rm  {0}*.tex {0}*.aux {0}*.log {0}*.jpg {0}*.pdf".format(dir))
+        #if(dir != "./"):
+    except Exception as e: print(e)
+
+
+
 def get_latex_img(name, folder="./"):
     name = folder + name
     #compile latex documents
