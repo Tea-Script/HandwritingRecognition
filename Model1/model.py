@@ -26,6 +26,7 @@ def get_symbol(image, model):
     _, pred = torch.max(outputs.data, 1)
     pred = int(pred[0]) 
     symbol = class_names2[pred]
+    print(symbol)
     symbol = unescape[symbol]
     return symbol    
 
@@ -44,7 +45,7 @@ def run_model(model):
                 symbol = get_symbol(img, model)
                 latex.append(symbol)
             avg_lev += LEV.Levenshtein(latex, label)
-            acc += latex == label
+            acc += np.sum(np.array(latex) == np.array(label))/ len(label)
             n += 1
             print("Accuracy by sample {0} is {1}".format(n, acc/n))
             print("Average Levenshtein Distance by sample {0} is {1}".format(n, avg_lev/n))

@@ -51,18 +51,20 @@ def simplify(path, verbose=0):
     #search latex file. For every "\" add the next found supported word to a list, then remove its first occurence from the string and list
     arr = []
     if(verbose): print(found_symbols)
-    for i in range(len(latex)):
+    i = 0
+    while i < len(latex):
         try:
             c = latex[i]
             if(c == "\\"): #found a "\" command
                 sym = found_symbols.pop(0)
                 arr.append(sym)
-                latex = latex.replace(sym, "", 1)
+                i += len(sym) - 1
 
             elif(c in "{}^_ " ): #found a position delimeter or container that doesn't belong to a command
                 pass
             else: #found a normal character
                 arr.append(c)
+            i += 1
         except IndexError:
             if(verbose): print("Warning no symbols remaining")
             break
@@ -129,4 +131,8 @@ LEV = lev()
 
 if(__name__ == "__main__"):
     print(simplify("test/0.tex", verbose=1))
+    print(2, LEV.Levenshtein(["123", "222"], ["222","123"]))
+    print(1,LEV.Levenshtein(["111"],["112"]))
+    print(0, LEV.Levenshtein(["111"],["111"]))
+    print(2, LEV.Levenshtein(["111"],["123","122"])) 
 
