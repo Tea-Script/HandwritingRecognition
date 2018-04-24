@@ -118,15 +118,15 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=15):
 
 
 #model_ft = models.resnet50(pretrained=True)
-model_ft = torchvision.models.densenet161(pretrained='imagenet')
-num_ftrs = model_ft.classifier.in_features
+model_ft = models.densenet161(pretrained="imagenet")
 for param in model_ft.parameters():
     param.requires_grad = False
 
-model_ft.classifier = nn.Linear(num_ftrs, len(class_names))
-
 #num_ftrs = model_ft.fc.in_features
 #model_ft.fc = nn.Linear(num_ftrs, len(class_names))
+num_ftrs = model_ft.classifier.in_features
+model_ft.classifier = nn.Linear(num_ftrs, len(class_names))
+
 
 if use_gpu:
     model_ft = model_ft.cuda()
@@ -145,6 +145,7 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=5, gamma=0.5)
 #torch.save(model_ft, "./weights2")
 model = torch.load("weights2")
 run_model(model)
+
 
 def visualize_model(model, num_images=9):
     was_training = model.training
