@@ -107,8 +107,7 @@ def gen_random_latex(hand=False, name="rand0", folder="./"):
             blacklist = [91,92,93,94,95,35,36,37,38, 39]
             r = [33, 43,45 ] + list(range(48,57)) + [60, 61, 62] + list(range(65,91)) + list(range(97,123))
             r = [chr(x) for x in r if x not in blacklist] #remove special characters and escape characters
-            n = random.choice(r)
-            c = chr(n)
+            c = random.choice(r)
             body += supportchar + c #add a space before c if previous char is escaped
             linecontent = True
             space = False

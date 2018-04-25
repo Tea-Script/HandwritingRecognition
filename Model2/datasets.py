@@ -19,13 +19,13 @@ plt.ion()
 
 data_transforms = {
     'train': transforms.Compose([
-        transforms.RandomRotation(75),# translate=(15,15)),
+        transforms.RandomRotation(70),# translate=(15,15)),
         transforms.Resize(256),
         transforms.RandomCrop(224),
         transforms.ToTensor()
     ]),
     'test': transforms.Compose([
-        transforms.RandomRotation(75),
+        transforms.RandomRotation(70),
         #transforms.RandomAffine(130, translate=(15,15)),
         transforms.Resize(256),
         transforms.RandomCrop(224),

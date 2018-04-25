@@ -15,8 +15,8 @@ with open('latexsymbols.txt', 'r') as f:
     supported_characters = f.read().split('\n')
 
     
-TRAINING_SIZE = 25
-TEST_SIZE = 15
+TRAINING_SIZE = 50
+TEST_SIZE = 25
 SIZES = [TRAINING_SIZE, TEST_SIZE]
 
 

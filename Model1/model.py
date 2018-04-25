@@ -8,15 +8,15 @@ class_names1 = r + supported_characters
 class_names2 = [replace(x) for x in class_names1 if replace(x) not in ["", " "]]
 unescape = dict(zip(class_names2, class_names1))
 class_names2 = list(sorted(class_names2))
-
+print(class_names2)
 
 model_ft = torchvision.models.densenet161(pretrained='imagenet')
 num_ftrs = model_ft.classifier.in_features
 for param in model_ft.parameters():
     param.requires_grad = False
-model_ft.classifier = nn.Linear(num_ftrs, len(class_names1))
+model_ft.classifier = nn.Linear(num_ftrs, len(class_names2))
 
-model_ft = torch.load("weights2")
+model_ft.load_state_dict(torch.load("./weights.pt"))
 
 def get_symbol(image, model):
     
@@ -32,7 +32,7 @@ def get_symbol(image, model):
     return symbol    
 
 def run_model(model):	
-    model.train = False
+    
     n = 0
     avg_lev = 0
     acc = 0
@@ -45,6 +45,8 @@ def run_model(model):
                 img = imread(os.path.join(path, f), mode="RGB")
                 symbol = get_symbol(img, model)
                 latex.append(symbol)
+            print(label)
+            print(latex)
             avg_lev += LEV.Levenshtein(latex, label)
 
             latex = latex[:len(label)]

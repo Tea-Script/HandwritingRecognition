@@ -135,15 +135,16 @@ criterion = nn.CrossEntropyLoss()
 
 # Observe that all parameters are being optimized
 #optimizer_ft = optim.SGD(model_ft.fc.parameters(), lr=0.001, momentum=0.9)
-optimizer_ft = optim.SGD(model_ft.classifier.parameters(), lr=0.2, momentum=0.9)
+optimizer_ft = optim.SGD(model_ft.classifier.parameters(), lr=0.3, momentum=0.5)
 
 # Decay LR by a factor of 0.1 every 7 epochs
-exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=5, gamma=0.5)
-#model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
-#                       num_epochs=8)
+exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=5, gamma=0.4)
+model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
+                       num_epochs=25)
 
-#torch.save(model_ft, "./weights2")
-model = torch.load("weights2")
+torch.save(model_ft.state_dict(), "./weights.pt")
+torch.save(model_ft.state_dict(), "../Model1/weights.pt")
+model = model_ft.load_state_dict(torch.load("./weights.pt"))
 run_model(model)
 
 
