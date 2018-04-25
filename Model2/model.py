@@ -2,6 +2,8 @@
 from datasets import *
 from confusionmeter import *
 
+print(dataloaders["test"])
+print(class_names)
 def run_model(model):
     model.train = False
     best_corrects = 0
@@ -118,7 +120,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=15):
 
 
 #model_ft = models.resnet50(pretrained=True)
-model_ft = models.densenet161(pretrained="imagenet")
+model_ft = models.densenet121(pretrained="imagenet")
 for param in model_ft.parameters():
     param.requires_grad = False
 
@@ -144,13 +146,13 @@ model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
 
 torch.save(model_ft.state_dict(), "./weights.pt")
 torch.save(model_ft.state_dict(), "../Model1/weights.pt")
-model = model_ft.load_state_dict(torch.load("./weights.pt"))
+model_ft.load_state_dict(torch.load("./weights.pt"))
 run_model(model)
 
 
 def visualize_model(model, num_images=9):
-    was_training = model.training
-    model.eval()
+    #was_training = model.training
+    #model.eval()
     images_so_far = 0
     fig = plt.figure()
 
@@ -174,7 +176,6 @@ def visualize_model(model, num_images=9):
             imshow(inputs.cpu().data[j])
             inp = inputs.cpu().data[j]
             inp = inp.numpy().transpose((1, 2, 0))
-            plt.imsave("saved" + str(j), inp)
             if images_so_far == num_images:
                 model.train(mode=was_training)
                 return

@@ -113,7 +113,7 @@ def make_img(symbol, phase, n, plot = False):
 
 #r = list(range(33, 123)) #keyboard values of ascii table
 blacklist = [91,92,93,94,95,35,36,37,38, 39]
-r = [33, 43,45 ] + list(range(48,57)) + [60, 61, 62] + list(range(65,91)) + list(range(97,123))
+r = [33, 43,45 ] + list(range(48,58)) + [60, 61, 62] + list(range(65,91)) + list(range(97,123))
 r = [chr(x) for x in r if x not in blacklist] #remove special characters and escape characters
 class_names = r + supported_characters 
 
