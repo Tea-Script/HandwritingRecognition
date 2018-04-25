@@ -1,22 +1,23 @@
 from datasets import *
 from scipy.misc import imread
 
-r = [33, 43,45 ] + list(range(48,57)) + [60, 61, 62] + list(range(65,91)) + list(range(97,123))
+r = [33, 43,45 ] + list(range(48,58)) + [60, 61, 62] + list(range(65,91)) + list(range(97,123))
 r = [chr(x) for x in r] #remove special characters and escape characters
 
 class_names1 = r + supported_characters
 class_names2 = [replace(x) for x in class_names1 if replace(x) not in ["", " "]]
+print(len(class_names1), len(class_names2))
 unescape = dict(zip(class_names2, class_names1))
 class_names2 = list(sorted(class_names2))
+print(class_names2)
 
-
-model_ft = torchvision.models.densenet161(pretrained='imagenet')
+model_ft = torchvision.models.densenet121(pretrained='imagenet')
 num_ftrs = model_ft.classifier.in_features
 for param in model_ft.parameters():
     param.requires_grad = False
-model_ft.classifier = nn.Linear(num_ftrs, len(class_names1))
+model_ft.classifier = nn.Linear(num_ftrs, len(class_names2))
 
-model_ft = torch.load("weights2")
+model_ft.load_state_dict(torch.load("weights.pt"))
 
 def get_symbol(image, model):
     
@@ -27,12 +28,12 @@ def get_symbol(image, model):
     #print(pred)
     pred = int(pred[0]) 
     symbol = class_names2[pred]
-    #print(symbol)
+    print(symbol)
     symbol = unescape[symbol]
     return symbol    
 
 def run_model(model):	
-    model.train = False
+    
     n = 0
     avg_lev = 0
     acc = 0
@@ -49,7 +50,7 @@ def run_model(model):
 
             latex = latex[:len(label)]
             label = label[:len(latex)]
-            print(len(latex),len(label))
+            if(n == 0): print(latex)
 
             acc += np.sum(np.array(latex) == np.array(label))/ len(label)
             n += 1

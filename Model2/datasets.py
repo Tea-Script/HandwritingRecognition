@@ -40,11 +40,12 @@ image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'test']}
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], 
-batch_size=100,shuffle=True, num_workers=16)
+batch_size=20,shuffle=True, num_workers=2)
               for x in ['train', 'test']}
 
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'test']}
 class_names = image_datasets['train'].classes
+print(class_names)
 use_gpu = torch.cuda.is_available()
 
 def imshow(inp, title=None):
