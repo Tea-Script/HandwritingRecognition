@@ -15,15 +15,15 @@ with open('latexsymbols.txt', 'r') as f:
     supported_characters = f.read().split('\n')
 
     
-TRAINING_SIZE = 30
-TEST_SIZE = 20
+TRAINING_SIZE = 25
+TEST_SIZE = 15
 SIZES = [TRAINING_SIZE, TEST_SIZE]
 
 fonts = ["default", "euler", "roman", "typewriter", "serif", "bb", "Antywaka condensed",
              "mathit", "mathpazo", "boisik", "sanscomputer", "neohellenic" , "bakersville", 
              "custom", "Antykwa"
             ]
-
+fonts = ["euler"]
 
 
 def gen_latex(digit, font="default"):
@@ -41,7 +41,7 @@ def gen_latex(digit, font="default"):
     elif(font == "euler"):
         preamble += "\\usepackage{concrete}"
         preamble += "\\usepackage{euler}"
-        content = """\\Huge{{${}$}}""".format(digit)
+        content = """${}$""".format(digit)
     elif(font == "typewriter"):
         content = """\\Huge{{$\\mathtt{{ {} }}$}}""".format(digit)
     elif(font == "roman"):
@@ -178,18 +178,19 @@ def make_img(symbol, phase, n, plot = False):
         minarr = np.amin(indices, axis = 0) #get first row, col meeting cond
         maxarr = np.amax(indices, axis = 0) #get last row, col meeting cond
         tmp = image[minarr[0]:maxarr[0] + 1, minarr[1] : maxarr[1] + 1]
-        size = max(tmp.shape)
-        arr = np.ones((size,size))
+        size0 = tmp.shape[0] + 2
+        size1 = tmp.shape[1] + 2
+        arr = np.ones((size0,size1))
         hw = maxarr - minarr + 1 #height, width
-        remainder_height = (size - hw[0]) // 2 
-        remainder_width = (size - hw[1]) // 2
+        remainder_height = (size0 - hw[0]) // 2 
+        remainder_width = (size1 - hw[1]) // 2
         #tmp = image[minarr[0] : minarr, startcol : fincol]
         arr[remainder_height : hw[0] + remainder_height , remainder_width : hw[1] + remainder_width] = tmp  
         if(plot):
             plt.imshow(arr, cmap=plt.get_cmap('Greys_r'))
             plt.show()
         os.system("rm " + imgloc)
-        plt.imsave(imgloc[:-4] +str(i)+".png" , arr, format="png", cmap=plt.get_cmap('Greys_r'))
+        plt.imsave(imgloc[:-4] +str(i)+".jpg" , arr, format="jpg", cmap=plt.get_cmap('Greys_r'))
     return arr
 
 

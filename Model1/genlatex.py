@@ -20,6 +20,8 @@ import numpy as np
 import scipy
 import scipy.io
 import cv2
+from skimage.transform import radon
+
 warnings.filterwarnings("ignore", category=DeprecationWarning) #ignore imread deprecation warning
 
 
@@ -56,7 +58,7 @@ def gen_random_latex(hand=False, name="rand0", folder="./"):
     supportchar = "" #is there a space after the last support char, if the next char is not ^ or _
     space = True #is the last character white space
     charlast = True #was the last character ascii/support?
-    for i in range(350):
+    for i in range(250):
         x = random.random()
         if(num_open == 0 and open_queue == 0):
             bracketcontent = False
@@ -131,14 +133,12 @@ def gen_random_latex(hand=False, name="rand0", folder="./"):
     f.close()
     return latex_doc
 
-def clear_dir(dir = "./"):
+def clear_dir(dir = "./test/"):
     '''Removes jpg, log, aux, and tex files from directory'''
     try:
-        os.system("rm  {0}*.tex {0}*.aux {0}*.log {0}*.jpg {0}*.pdf".format(dir))
+        os.system("rm -r {}*".format(dir))
         #if(dir != "./"):
     except Exception as e: print(e)
-
-
 
 def get_latex_img(name, folder="./"):
     name = folder + name
@@ -169,35 +169,81 @@ def get_bounding_boxes(file_name, out_dir):
 
     img_final = cv2.imread(file_name)
     imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    ret, thresh = cv2.threshold(imgray, 127, 255, 0)
+    kernel = np.ones((1,1), np.uint8)
+    imav = cv2.dilate(imgray,kernel, iterations=3)
+    
+    ret, thresh = cv2.threshold(imav, 127, 255, 0)
 
     image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     #cv2.drawContours(img, contours, -1, (0,255,0), 3)
-    index = 0
     images = []
-    for contour in contours:
+    sorted_contours = sorted(contours, key=lambda ctr: cv2.boundingRect(ctr)[0]) #sort images by x value
+    for contour in sorted_contours:
         # get rectangle bounding contour
         [x, y, w, h] = cv2.boundingRect(contour)
-
+        index = str(y) + str(x)        
+        if(w > 2 and h > 2 and (x != 0 and y != 0)):
+            # draw rectangle around contour on original image
+            cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 255), 2)
+            cv2.imshow("s",img)
+            cv2.waitKey(100)
+            images.append([x,y,w,h])
         
-
-        # draw rectangle around contour on original image
-        cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 255), 2)
-
-        cropped = img_final[y :y +  h , x : x + w]
-        images.append(cropped)
-        s = os.path.join(out_dir, str(index)+ '.jpg')  
-        if(w > 5 and h > 5 and index):
-        	cv2.imwrite(s , cropped)
-        index += 1
 
     # write original image with added contours to disk
     cv2.imwrite('boundingboxes.jpg', img)
-    cv2.waitKey(10000)
-    cv2.destroyAllWindows()
-    return images
+    #cv2.waitKey(10000)
+    #cv2.destroyAllWindows()
+
+    img = cv2.imread('boundingboxes.jpg')
+    imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    kernel = np.ones((19,19), np.uint8)
+    imav = cv2.erode(imgray,kernel, iterations=3)
+    ret, thresh = cv2.threshold(imgray, 127, 255, cv2.THRESH_BINARY)
+    #cv2.imshow("s",thresh) 
+    #cv2.waitKey(10000)
+    image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    
+    lines = []
+    #sort contours
+    sorted_contours = sorted(contours, key=lambda ctr: cv2.boundingRect(ctr)[1]) #sort lines by y value 
+
+    for contour in sorted_contours:
+        # get rectangle bounding contour
+        [x, y, w, h] = cv2.boundingRect(contour)
+        index = str(y) + str(x)        
+        if(w > 14 and h > 5 and (x!=0 and y!= 0)):
+            # draw rectangle around contour on original image
+            cv2.rectangle(img_final, (x, y), (x + w, y + h), (255, 0, 255), 2)
+            cv2.imshow("s",img_final)
+            cv2.waitKey(1000)
+            linebox = [x,y,w,h]
+            lines.append(linebox)
+    # write original image with added contours to disk
+    cv2.imwrite('boundinglines.jpg', img_final)
+    #cv2.waitKey(10000)
+    #cv2.destroyAllWindows()
+    final_order = [[]]*len(lines)
+    index = "0"
+    img = cv2.imread(file_name)
+    for i,linebox in enumerate(lines):
+        xl,yl,wl,hl = linebox
+        for image in images:
+            x,y,w,h = image
+            if((yl <= y <= yl+hl or yl <= y+h <= yl + hl )):
+                #image belongs in this linebox
+                cropped = img[y :y +  h , x : x + w]
+                final_order[i].append(cropped)
+                s = index
+                cv2.imwrite(os.path.join(out_dir, s) + ".jpg", cropped)
+                index += "0"
+                images.remove(image)
+     
+        
+        
+        
+    return final_order
 
 
 test_size = 15
@@ -226,4 +272,4 @@ def preprocess(generate = False):
 
 if(__name__ == "__main__"):
     preprocess(generate=1)
-    get_bounding_boxes("test/0.jpg")
+    #get_bounding_boxes("test/0.jpg", "./test")

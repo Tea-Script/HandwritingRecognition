@@ -22,7 +22,7 @@ with open('latexsymbols.txt', 'r') as f:
 
 data_transforms = transforms.Compose([
         transforms.ToPILImage(),
-        transforms.RandomRotation(75),
+        transforms.RandomRotation(25),
         #transforms.RandomAffine(130, translate=(15,15)),
         transforms.Resize(256),
         transforms.RandomCrop(224),
@@ -32,6 +32,14 @@ data_transforms = transforms.Compose([
 
         
 data_dir = "./"
+image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
+                                          data_transforms)
+                  for x in ['test']}
+dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], 
+batch_size=1,shuffle=False, num_workers=2)
+              for x in ['test']}
+
+dataset_sizes = {x: len(image_datasets[x]) for x in ['test']}
 
 def simplify(path, verbose=0):
     '''Returns a list containing each character in a LaTex document string in order of appearance'''

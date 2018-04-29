@@ -5,7 +5,7 @@ from confusionmeter import *
 print(dataloaders["test"])
 print(class_names)
 def run_model(model):
-    model.train = False
+    #model.train = False
     best_corrects = 0
     top3_best_corrects = 0
     individual_accuracy = [0]*len(class_names)
@@ -86,7 +86,12 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=15):
                 _, preds = torch.max(outputs.data, 1) 
                 #preds = preds.float()
                 loss = criterion(outputs, labels)
+                '''try:
+                    print("Predicted values", list(class_names[x] for x in preds[:10])) 
 
+                    print("Actual Value", list(class_names[labels.data[x]] for x in range(10)))
+                except:
+                    pass'''
                 # backward + optimize only if in training phase
                 if phase == 'train':
                     loss.backward()
@@ -120,7 +125,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=15):
 
 
 #model_ft = models.resnet50(pretrained=True)
-model_ft = models.densenet121(pretrained="imagenet")
+model_ft = models.densenet161(pretrained="imagenet")
 for param in model_ft.parameters():
     param.requires_grad = False
 
@@ -136,18 +141,18 @@ if use_gpu:
 criterion = nn.CrossEntropyLoss()
 
 # Observe that all parameters are being optimized
-#optimizer_ft = optim.SGD(model_ft.fc.parameters(), lr=0.001, momentum=0.9)
-optimizer_ft = optim.SGD(model_ft.classifier.parameters(), lr=0.3, momentum=0.5)
+optimizer_ft = optim.Adam(model_ft.classifier.parameters(), lr=0.1)
+#optimizer_ft = optim.SGD(model_ft.classifier.parameters(), lr=0.2, momentum=0.8)
 
 # Decay LR by a factor of 0.1 every 7 epochs
-exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=5, gamma=0.4)
+exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=5, gamma=0.5)
 model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
-                       num_epochs=25)
+                       num_epochs=10)
 
 torch.save(model_ft.state_dict(), "./weights.pt")
 torch.save(model_ft.state_dict(), "../Model1/weights.pt")
 model_ft.load_state_dict(torch.load("./weights.pt"))
-run_model(model)
+run_model(model_ft)
 
 
 def visualize_model(model, num_images=9):
@@ -177,9 +182,9 @@ def visualize_model(model, num_images=9):
             inp = inputs.cpu().data[j]
             inp = inp.numpy().transpose((1, 2, 0))
             if images_so_far == num_images:
-                model.train(mode=was_training)
+                #model.train(mode=was_training)
                 return
-    model.train(mode=was_training)
+    #model.train(mode=was_training)
 print("visualizing model")
 visualize_model(model_ft)
 
